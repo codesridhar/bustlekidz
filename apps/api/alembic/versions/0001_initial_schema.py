@@ -16,6 +16,20 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
+    # ── enums (idempotent) ─────────────────────────────────────────────────
+    op.execute(sa.text(
+        "CREATE TYPE IF NOT EXISTS userrole AS ENUM "
+        "('super_admin','admin','principal','class_teacher','teacher','parent')"
+    ))
+    op.execute(sa.text(
+        "CREATE TYPE IF NOT EXISTS attendancestatus AS ENUM "
+        "('present','absent','late','half_day','holiday')"
+    ))
+    op.execute(sa.text(
+        "CREATE TYPE IF NOT EXISTS enquirystatus AS ENUM "
+        "('new','visit_scheduled','visit_done','admission','dropped')"
+    ))
+
     # ── users ──────────────────────────────────────────────────────────────
     op.create_table(
         "users",
@@ -28,6 +42,7 @@ def upgrade() -> None:
                 "super_admin", "admin", "principal",
                 "class_teacher", "teacher", "parent",
                 name="userrole",
+                create_type=False,
             ),
             nullable=False,
             server_default="parent",
@@ -156,6 +171,7 @@ def upgrade() -> None:
             sa.Enum(
                 "present", "absent", "late", "half_day", "holiday",
                 name="attendancestatus",
+                create_type=False,
             ),
             nullable=False,
         ),
@@ -188,6 +204,7 @@ def upgrade() -> None:
             sa.Enum(
                 "new", "visit_scheduled", "visit_done", "admission", "dropped",
                 name="enquirystatus",
+                create_type=False,
             ),
             nullable=False,
             server_default="new",
