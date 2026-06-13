@@ -202,21 +202,21 @@ def upgrade() -> None:
     op.create_index("ix_enquiries_status", "enquiries", ["status"])
 
     # ── seed: default classes ──────────────────────────────────────────────
-    op.execute("""
-        INSERT INTO classes (id, name, code, age_min_months, age_max_months, capacity) VALUES
-        ('cls-pg',  'Playgroup', 'PG',  18, 36, 20),
-        ('cls-dc',  'Daycare',   'DC',  12, 72, 15),
-        ('cls-lkg', 'LKG',       'LKG', 48, 60, 25),
-        ('cls-ukg', 'UKG',       'UKG', 60, 72, 25)
-    """)
+    op.execute(sa.text(
+        "INSERT INTO classes (id, name, code, age_min_months, age_max_months, capacity) VALUES "
+        "('cls-pg',  'Playgroup', 'PG',  18, 36, 20), "
+        "('cls-dc',  'Daycare',   'DC',  12, 72, 15), "
+        "('cls-lkg', 'LKG',       'LKG', 48, 60, 25), "
+        "('cls-ukg', 'UKG',       'UKG', 60, 72, 25)"
+    ))
 
-    op.execute("""
-        INSERT INTO sections (id, name, class_id) VALUES
-        ('sec-pg-a',  'A', 'cls-pg'),
-        ('sec-dc-a',  'A', 'cls-dc'),
-        ('sec-lkg-a', 'A', 'cls-lkg'),
-        ('sec-ukg-a', 'A', 'cls-ukg')
-    """)
+    op.execute(sa.text(
+        "INSERT INTO sections (id, name, class_id) VALUES "
+        "('sec-pg-a',  'A', 'cls-pg'), "
+        "('sec-dc-a',  'A', 'cls-dc'), "
+        "('sec-lkg-a', 'A', 'cls-lkg'), "
+        "('sec-ukg-a', 'A', 'cls-ukg')"
+    ))
 
 
 def downgrade() -> None:
@@ -228,6 +228,6 @@ def downgrade() -> None:
     op.drop_table("sections")
     op.drop_table("classes")
     op.drop_table("users")
-    op.execute("DROP TYPE IF EXISTS userrole")
-    op.execute("DROP TYPE IF EXISTS attendancestatus")
-    op.execute("DROP TYPE IF EXISTS enquirystatus")
+    op.execute(sa.text("DROP TYPE IF EXISTS userrole"))
+    op.execute(sa.text("DROP TYPE IF EXISTS attendancestatus"))
+    op.execute(sa.text("DROP TYPE IF EXISTS enquirystatus"))
